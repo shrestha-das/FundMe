@@ -8,10 +8,10 @@ pragma solidity ^0.8.18;
 import {Script} from "forge-std/Script.sol";
 import {MockV3Aggregator} from "../test/mocks/MockV3Aggregator.sol";
 
-contract HelperConfig is Script{
+contract HelperConfig is Script {
     // If we are on a local anvil chain, we deploy mocks
     // Otherwise, grab the existing address from the live network
-    
+
     NetworkConfig public activeNetworkConfig;
     uint8 public constant DECIMALS = 8;
     int256 public constant INITIAL_ANSWER = 2000e8;
@@ -23,37 +23,29 @@ contract HelperConfig is Script{
     constructor() {
         if (block.chainid == 11155111) {
             activeNetworkConfig = getSepoliaEthConfig();
-        }
-        else if (block.chainid == 1) {
+        } else if (block.chainid == 1) {
             activeNetworkConfig = getMainnetEthConfig();
-        } 
-        else {
+        } else {
             activeNetworkConfig = getOrCreateAnvilEthConfig();
         }
     }
 
-    function getActiveNetworkConfig() external view returns (NetworkConfig memory)
-    {
-      return activeNetworkConfig;
+    function getActiveNetworkConfig() external view returns (NetworkConfig memory) {
+        return activeNetworkConfig;
     }
-
 
     function getSepoliaEthConfig() public pure returns (NetworkConfig memory) {
         // data feed address
-        NetworkConfig memory sepoliaConfig = NetworkConfig({
-            dataFeed: 0x694AA1769357215DE4FAC081bf1f309aDC325306
-        });
+        NetworkConfig memory sepoliaConfig = NetworkConfig({dataFeed: 0x694AA1769357215DE4FAC081bf1f309aDC325306});
         return sepoliaConfig;
     }
 
     function getMainnetEthConfig() public pure returns (NetworkConfig memory) {
         // data feed address
-        NetworkConfig memory mainnetConfig = NetworkConfig({
-            dataFeed: 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419
-        });
+        NetworkConfig memory mainnetConfig = NetworkConfig({dataFeed: 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419});
         return mainnetConfig;
     }
-   
+
     function getOrCreateAnvilEthConfig() public returns (NetworkConfig memory) {
         // data feed address
 
@@ -67,11 +59,8 @@ contract HelperConfig is Script{
         vm.startBroadcast();
         MockV3Aggregator mockDataFeed = new MockV3Aggregator(DECIMALS, INITIAL_ANSWER);
         vm.stopBroadcast();
-        
-        NetworkConfig memory anvilConfig = NetworkConfig({
-            dataFeed: address(mockDataFeed)
-        });
+
+        NetworkConfig memory anvilConfig = NetworkConfig({dataFeed: address(mockDataFeed)});
         return anvilConfig;
     }
-
 }

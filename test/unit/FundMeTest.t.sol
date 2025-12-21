@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.30;
 
-import {Test,console} from "forge-std/Test.sol";
+import {Test, console} from "forge-std/Test.sol";
 import {FundMe} from "src/FundMe.sol";
 import {DeployFundMe} from "script/DeployFundMe.s.sol";
 
-contract FundMeTest is Test{
+contract FundMeTest is Test {
     FundMe fundMe;
-    
+
     address USER = makeAddr("user");
     uint256 constant SEND_VALUE = 0.1 ether;
     uint256 constant STARTING_BALANCE = 10 ether;
-    uint256 public GAS_PRICE = 1 ;
+    uint256 public GAS_PRICE = 1;
 
     function setUp() external {
         // fundMe = new FundMe(0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419);
@@ -24,11 +24,11 @@ contract FundMeTest is Test{
         assertEq(fundMe.MINIMUM_USD(), 5e18);
     }
 
-    function testOwnerIsMsgSender() public view{
+    function testOwnerIsMsgSender() public view {
         assertEq(fundMe.getOwner(), msg.sender);
     }
 
-    function testDataFeedVersionIsAccurate() public view{
+    function testDataFeedVersionIsAccurate() public view {
         uint256 version = fundMe.getVersion();
         assertEq(version, 4);
     }
@@ -61,8 +61,7 @@ contract FundMeTest is Test{
         _;
     }
 
-    function testOnlyOwnerCanWithdraw() public funded{
-
+    function testOnlyOwnerCanWithdraw() public funded {
         vm.prank(USER);
         vm.expectRevert();
         fundMe.withdraw();
@@ -80,33 +79,29 @@ contract FundMeTest is Test{
         fundMe.withdraw();
 
         uint256 gasEnd = gasleft();
-        uint256 gasUsed = (gasStart - gasEnd) * tx.gasprice;    
+        uint256 gasUsed = (gasStart - gasEnd) * tx.gasprice;
         console.log("Gas Used:", gasUsed);
 
         // Assert
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
         uint256 endingFundMeBalance = address(fundMe).balance;
         assertEq(endingFundMeBalance, 0);
-        assertEq(
-            startingFundMeBalance + startingOwnerBalance,
-            endingOwnerBalance
-        );
-    } 
+        assertEq(startingFundMeBalance + startingOwnerBalance, endingOwnerBalance);
+    }
 
     function testWithdrawFromMultipleFunders() public funded {
         // Arrange
-        
+
         uint160 numberOfFunders = 10;
         uint160 startingFunderIndex = 1; // uint160 instead of uint256 to avoid overflow in loop
 
-
         for (uint160 i = startingFunderIndex; i < numberOfFunders; i++) {
-           // vm.prank new address
-           // vm.deal new address
-           // address()
-           hoax(address(i), SEND_VALUE);
-           // fund the fundMe contract 
-           fundMe.fund{value: SEND_VALUE}();
+            // vm.prank new address
+            // vm.deal new address
+            // address()
+            hoax(address(i), SEND_VALUE);
+            // fund the fundMe contract
+            fundMe.fund{value: SEND_VALUE}();
         }
 
         uint256 startingOwnerBalance = fundMe.getOwner().balance;
@@ -121,26 +116,22 @@ contract FundMeTest is Test{
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
         uint256 endingFundMeBalance = address(fundMe).balance;
         assertEq(endingFundMeBalance, 0);
-        assertEq(
-            startingFundMeBalance + startingOwnerBalance,
-            endingOwnerBalance
-        );
+        assertEq(startingFundMeBalance + startingOwnerBalance, endingOwnerBalance);
     }
 
     function testWithdrawFromMultipleFundersCheaper() public funded {
         // Arrange
-        
+
         uint160 numberOfFunders = 10;
         uint160 startingFunderIndex = 1; // uint160 instead of uint256 to avoid overflow in loop
 
-
         for (uint160 i = startingFunderIndex; i < numberOfFunders; i++) {
-           // vm.prank new address
-           // vm.deal new address
-           // address()
-           hoax(address(i), SEND_VALUE);
-           // fund the fundMe contract 
-           fundMe.fund{value: SEND_VALUE}();
+            // vm.prank new address
+            // vm.deal new address
+            // address()
+            hoax(address(i), SEND_VALUE);
+            // fund the fundMe contract
+            fundMe.fund{value: SEND_VALUE}();
         }
 
         uint256 startingOwnerBalance = fundMe.getOwner().balance;
@@ -155,9 +146,6 @@ contract FundMeTest is Test{
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
         uint256 endingFundMeBalance = address(fundMe).balance;
         assertEq(endingFundMeBalance, 0);
-        assertEq(
-            startingFundMeBalance + startingOwnerBalance,
-            endingOwnerBalance
-        );
+        assertEq(startingFundMeBalance + startingOwnerBalance, endingOwnerBalance);
     }
 }

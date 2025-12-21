@@ -34,11 +34,10 @@ contract FundMe {
         s_funders.push(msg.sender);
         s_addressToAmountfunded[msg.sender] += msg.value;
     }
- 
+
     // A gas efficient withdraw function
     function cheaperWithdraw() public onlyOwner {
-
-        uint256 fundersLength =  s_funders.length;
+        uint256 fundersLength = s_funders.length;
 
         for (uint256 funderIndex = 0; funderIndex < fundersLength; funderIndex++) {
             address funder = s_funders[funderIndex];
@@ -52,8 +51,8 @@ contract FundMe {
         // require(sendSuccess, "send failed");
         (bool success,) = i_owner.call{value: address(this).balance}("");
         require(success);
-    }       
-    
+    }
+
     // A function to Withdraw the funds
     function withdraw() public onlyOwner {
         for (uint256 funderIndex = 0; funderIndex < s_funders.length; funderIndex++) {
@@ -79,11 +78,9 @@ contract FundMe {
         fund();
     }
 
-    
     function getVersion() public view returns (uint256) {
         return s_dataFeed.version();
     }
-
 
     /**
      * View / Pure functions (Getters)
