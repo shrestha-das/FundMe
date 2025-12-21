@@ -23,8 +23,10 @@ contract InteractionsTest is Test{
     function testUserCanFundInteractions() public {
 
         vm.prank(USER);
+        fundMe.fund{value: SEND_VALUE}();
 
         FundFundMe fundFundMe = new FundFundMe();
+        vm.deal(address(fundFundMe), STARTING_BALANCE);
         fundFundMe.fundFundMe(address(fundMe));
 
         WithdrawFundMe withdrawFundMe = new WithdrawFundMe();
